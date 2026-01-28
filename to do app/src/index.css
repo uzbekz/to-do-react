@@ -1,0 +1,15 @@
+span{
+  margin-right: 10px;
+}
+
+body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}

@@ -1,0 +1,9 @@
+.app-container {
+  margin-top: 40px;      
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 40px;
+  max-width: 900px;
+  width: 100%;
+}
