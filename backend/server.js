@@ -1,17 +1,18 @@
 import express from 'express'
-import User from './models/Users'
+import User from './models/Users.js'
 import Task from './models/Task.js'
 import cors from 'cors'
-import { authenticate } from './middleware/auth'
-import User from './models/Users.js'
-import bcypt from 'bcrypt'
+import { authenticate } from './middleware/auth.js'
+import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import sequelize from './db.js'
 
 const SECRET = "my_super_secret_key";
 const app = express()
 
 app.use(cors())
 app.use(express.json())
+
 
 app.post('/login', async (req,res) => {
   try{
@@ -27,7 +28,7 @@ app.post('/login', async (req,res) => {
       return res.status(404).json({message : "user not found"})
     }
 
-    const valid = bcypt.compare(password, user.password_hash)
+    const valid = bcrypt.compare(password, user.password_hash)
     if(!valid){
       return res.status(401).json({message : "invalid credentials"})
     }
@@ -57,7 +58,7 @@ app.post('/register', async (req,res) => {
       return res.status(409).json({message : "user already exists"})
     }
 
-    const hashedPassword = await bcypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(password, 10)
     const obj = await User.create({
       email,
       password_hash : hashedPassword
@@ -72,9 +73,24 @@ app.get('/tasks' ,authenticate ,async (req, res) => {
   const user_id = req.user.id
   try{
     const tasks = await Task.findAll({ where : {user_id}})
-    req.json(tasks)
+    res.json(tasks)
   }catch(err){
     return res.status(500).json({message : "couldn't find the tasks"})
+  }
+})
+
+app.post('/tasks', authenticate, async (req, res) => {
+  const user_id = req.user.id
+  const {task, date} = req.body
+  try{
+    const newTask = await Task.create({
+      user_id,
+      task,
+      date
+    })
+    res.status(201).json(newTask)
+  }catch(err){
+    return res.status(500).json({message : "sequelize method call error"})
   }
 })
 
@@ -88,7 +104,7 @@ app.delete('/tasks/:id' , authenticate , async (req, res) => {
       return res.status(404).json({message : "no task was found to delete"})
     }
 
-    req.json({message : "deleted tasks"})
+    res.json({message : "deleted tasks"})
   }catch(err){
     return res.status(500).json({message : "couldn't delete the tasks"})
   }
@@ -119,7 +135,7 @@ app.patch('/tasks/:id/completed', authenticate, async (req,res) => {
   try{
     const id = Number(req.params.id)
     const completed = req.body.completed
-    const [updated] = await Task.update({completed : true}, {
+    const [updated] = await Task.update({completed}, {
       where : {
         id,
         user_id : req.user.id
@@ -136,22 +152,41 @@ app.patch('/tasks/:id/completed', authenticate, async (req,res) => {
   }
 })
 
-app.get('/history', authenticate, async (req,res) => {
+app.delete('/tasks/completed', authenticate, async (req, res) => {
+  const user_id = req.user.id
   try{
-    const completedTask = await Task.findAll({completed  : true},{
+    const rowsDeleted = await Task.destroy({
       where : {
-        user_id : req.user.id,
+        user_id,
+        completed : true
       }
     })
 
-    if(!completedTask){
-      return res.status(404).json({message : "user has no completed tasks"})
+    if(rowsDeleted === 0){
+      return res.status(404).json({message : 'no task were deleted'})
     }
+
+    return res.status(200).json({message : `deleted ${rowsDeleted} rows`})
   }catch(err){
-    res.status(500).json({message : "the sequelize method failed"})
+    return res.status(500).json({message : "sequelize method failed to execute"})
   }
 })
 
-app.listen(5000, () =>{
-  console.log('server is listening on port 5000')
-})
+async function startServer() {
+  try {
+    await sequelize.authenticate()
+    console.log('Database connected')
+
+    await sequelize.sync()
+    console.log('Models synchronized')
+
+    app.listen(5000, () => {
+      console.log('Server is listening on port 5000')
+    })
+  } catch (err) {
+    console.error('Unable to start server:', err)
+  }
+}
+
+startServer()
+

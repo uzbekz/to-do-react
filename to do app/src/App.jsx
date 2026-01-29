@@ -1,13 +1,14 @@
 import Input from './Input.jsx'
 import './App.css'
-import {  useState } from 'react'
 import History from './History.jsx'
 import Completed from './Completed.jsx'
 import Login from './Login.jsx'
 import Register from './Register.jsx'
+import MainPage from './MainPage.jsx'
+import { Routes, Route } from 'react-router-dom'
+
 function App() {
-  const [task, setTask] = useState([])
-  const [doneTask, setDoneTask] = useState([])
+  
   return (
     <Routes>
       <Route path='/' element={<Login/>}/>
