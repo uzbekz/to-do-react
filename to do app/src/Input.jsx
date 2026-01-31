@@ -1,5 +1,6 @@
 import { useState } from "react"
 import dayjs from 'dayjs'
+import './Input.css'
 
 function Input({task,setTask}){
   const [inputValue, setInputValue] = useState('')
@@ -31,7 +32,7 @@ function Input({task,setTask}){
     setDateValue(dayjs().format('YYYY-MM-DD'))
   }
   return (
-    <div>
+    <div className="add-task">
       <input type="text" 
         placeholder="Enter a task" 
         value={inputValue} 
@@ -48,7 +49,7 @@ function Input({task,setTask}){
         }}
       >
       </input>
-      <button onClick={addTask}>Add Task</button>
+      <button onClick={addTask}>ADD</button>
     </div>
   )
 }

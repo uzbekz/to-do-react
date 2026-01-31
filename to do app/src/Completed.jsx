@@ -1,3 +1,5 @@
+import './Completed.css'
+
 function Completed({doneTask, setDoneTask}){
   async function clearTasks(){
     if(doneTask.length === 0) return 
@@ -18,12 +20,12 @@ function Completed({doneTask, setDoneTask}){
     alert(data.message)
   }
   return(
-    <div>
+    <div className="completed-tasks-container">
       <button onClick={clearTasks}>clear History</button>
       {
         doneTask.map((task) => {
           return (
-            <div key={task.id}>
+            <div key={task.id} className='completed-task-details'>
               <span>task : {task.task}</span>
               <span>Completed before: {task.date}</span>
             </div>

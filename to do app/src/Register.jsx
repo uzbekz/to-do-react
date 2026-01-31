@@ -1,10 +1,18 @@
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import {useNavigate, Link} from  'react-router-dom'
-
+import './Login.css'
 function Register(){
   const navigate = useNavigate()
   const [userName, setUserName] = useState('')
   const [password, setPassword] = useState('')
+
+  useEffect(()=> {
+      document.body.classList.add('login-bg');
+      return () => {
+        document.body.classList.remove('login-bg');
+      }
+    },[])
+  
 
   async function handleSubmit(e){
     e.preventDefault()
@@ -31,14 +39,16 @@ function Register(){
     navigate('/')
   }
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="email" value={userName} onChange={(e) => setUserName(e.target.value)} required/>
-        <input type="text" placeholder="username" value={password} onChange={(e) => setPassword(e.target.value)} required/>
+    <div className = "login-container">
+      <form onSubmit={handleSubmit} className='login-form'>
+        <label for="email">Email</label>
+        <input type="text" id="email" value={userName} onChange={(e) => setUserName(e.target.value)} required/>
+        <label for="password">Password</label>
+        <input type="text" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
         <button type="submit">register</button>
       </form>
       <Link to = '/'>already have an account</Link>
-    </>
+    </div>
   )
 }
 export default Register

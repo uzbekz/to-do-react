@@ -1,7 +1,12 @@
-.app-container{
-  display: flex;
-  flex-direction: row;
-  gap : 30px;
-  justify-content: center;
-  align-items: center;
+.app-container {
+  margin: 80px auto;
+  max-width: 1200px;
+  padding: 24px;
+
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+  align-items: start;
 }
+
+

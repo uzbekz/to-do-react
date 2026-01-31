@@ -1,9 +1,17 @@
 import {useNavigate,Link} from 'react-router-dom'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
+import './Login.css'
 function Login(){
   const navigate = useNavigate()
   const[email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  useEffect(()=> {
+    document.body.classList.add('login-bg');
+    return () => {
+      document.body.classList.remove('login-bg');
+    }
+  },[])
 
   async function handleSubmit(e){
     e.preventDefault()
@@ -31,14 +39,16 @@ function Login(){
     navigate('/mainPage')
   }
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <input required type='email' placeholder='email..' value={email} onChange={(e) => setEmail(e.target.value)}/>
-        <input required type='password' placeholder='password..' value={password} onChange={(e) => setPassword(e.target.value)}/>
+    <div className = "login-container">
+      <form onSubmit={handleSubmit} className='login-form'>
+        <label for="email">Email</label>
+        <input required id = "email" type='email' value={email} onChange={(e) => setEmail(e.target.value)}/>
+        <label for="password">Password</label>
+        <input required id="password" type='password' value={password} onChange={(e) => setPassword(e.target.value)}/>
         <button type='submit'>login</button>
       </form>
       <Link to='/register'>Don't have an account - register</Link>
-    </>
+    </div>
   )
 }
 

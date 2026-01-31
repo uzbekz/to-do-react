@@ -33,14 +33,14 @@ function MainPage(){
   },[])
   return (
     <div className='app-container'>
-      <div>
+      <div className="left-column">
         <Input task={task} setTask={setTask}/>
         <History setDoneTask={setDoneTask} doneTask={doneTask} task={task} setTask={setTask}/>
-        <Header/>
       </div>
       <div>
         <Completed doneTask={doneTask} setDoneTask={setDoneTask}/>
       </div>
+      <Header/>
     </div>
   )
 }
